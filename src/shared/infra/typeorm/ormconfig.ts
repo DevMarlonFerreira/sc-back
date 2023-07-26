@@ -10,3 +10,4 @@ export const dataSource = new DataSource({
   entities: ["./src/shared/typeorm/migrations/*.ts"],
   migrations: ["./src/shared/typeorm/migrations/*.ts"],
 });
+

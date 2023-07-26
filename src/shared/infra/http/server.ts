@@ -7,7 +7,7 @@ import helmet from "helmet";
 import compression from "compression";
 import { errors } from "celebrate";
 import routes from "./routes";
-import AppError from "@shared/erros/AppError";
+import AppError from "@shared/errors/AppError";
 // import '@shared/typeorm';
 import "@shared/container";
 import logger from "@config/logger";
