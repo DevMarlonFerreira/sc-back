@@ -5,7 +5,7 @@ import FakeInvoicesRepository from '@modules/invoices/domain/repositories/fakes/
 let fakeInvoicesRepository: FakeInvoicesRepository;
 let listInvoice: ListInvoiceService;
 
-describe('CreateCustomer', () => {
+describe('GetInvoices', () => {
   beforeEach(() => {
     fakeInvoicesRepository = new FakeInvoicesRepository();
     listInvoice = new ListInvoiceService(fakeInvoicesRepository);
