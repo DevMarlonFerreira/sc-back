@@ -8,7 +8,7 @@ export default class InvoicesController {
     const limit = request.query.limit ? Number(request.query.limit) : 15;
 
     const listInvoice = container.resolve(ListInvoiceService);
-    const invoice = await listInvoice.execute({ page, limit });
+    const invoice = await listInvoice.execute();
 
     return response.json(invoice);
   }

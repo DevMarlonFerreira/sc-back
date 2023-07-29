@@ -1,4 +1,6 @@
 import { DataSource, DatabaseType } from "typeorm";
+import Invoice from '@modules/invoices/infra/typeorm/entities/Invoice';
+
 // import {ConnectionOptions, DatabaseType} from 'typeorm';    
 
 // const dataBaseType: DatabaseType = process.env.DATABASE_URL;
@@ -14,7 +16,7 @@ export const dataSource = new DataSource({
   },
   synchronize: process.env.DATABASE_SYNCHRONIZE === 'true' || false,
   logging: process.env.DATABASE_LOGGING === 'true' || false,
-  entities: ["./src/shared/typeorm/migrations/*.ts"],
+  entities: [Invoice],
   migrations: ["./src/shared/typeorm/migrations/*.ts"],
 });
 
