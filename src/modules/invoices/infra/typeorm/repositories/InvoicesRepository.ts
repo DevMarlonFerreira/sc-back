@@ -1,3 +1,4 @@
+import { IInvoice } from "@modules/invoices/domain/models/IInvoice";
 import { IInvoicesRepository } from "@modules/invoices/domain/repositories/IInvoicesRepository";
 import { Repository } from "typeorm";
 import Invoice from "../entities/Invoice";
@@ -9,13 +10,16 @@ import { dataSource } from "@shared/infra/typeorm/ormconfig";
 //   take: number;
 // };
 
-class UsersRepository implements IInvoicesRepository {
+class InvoicesRepository implements IInvoicesRepository {
   private ormRepository: Repository<Invoice>;
 
   constructor() {
     this.ormRepository = dataSource.getRepository(Invoice);
   }
-  public async findAll(): Promise<Invoice[]> {
+
+  public async findAll(): Promise<IInvoice[]> {
+    await this.ormRepository.find({});
+
     const [invoices, count] = await this.ormRepository
       .createQueryBuilder()
       // .skip(skip)
@@ -31,6 +35,12 @@ class UsersRepository implements IInvoicesRepository {
 
     return invoices;
   }
+
+  public async savePdf(pdf: IInvoice): Promise<IInvoice> {
+    await this.ormRepository.save(pdf);
+
+    return pdf;
+  }
 }
 
-export default UsersRepository;
+export default InvoicesRepository;

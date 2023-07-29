@@ -8,4 +8,5 @@ import { IInvoice } from "../models/IInvoice";
 
 export interface IInvoicesRepository {
   findAll(): Promise<IInvoice[]>;
+  savePdf(pdf: IInvoice): Promise<IInvoice>;
 }
