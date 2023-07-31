@@ -8,16 +8,11 @@ import compression from "compression";
 import { errors } from "celebrate";
 import routes from "./routes";
 import AppError from "@shared/errors/AppError";
-// import '@shared/typeorm';
 import "@shared/container";
 import logger from "@config/logger";
 import { connect } from "../typeorm";
 
-// import "@shared/infra/typeorm";
-
-
 import PdfSaveProvider from "@shared/providers/pdf/PdfSaveProvider";
-
 
 export class SetupServer {
   private app: Application;
@@ -25,7 +20,6 @@ export class SetupServer {
 
   constructor(private port = 3333) {
     this.app = express();
-
   }
 
   public async init() {
@@ -70,8 +64,8 @@ export class SetupServer {
   public async start(): Promise<void> {
     await this.databaseSetup();
 
-    // this.pdfSaveProvider = new PdfSaveProvider();
-    // this.pdfSaveProvider.savePdf();
+    this.pdfSaveProvider = new PdfSaveProvider();
+    this.pdfSaveProvider.savePdf();
 
     this.app.listen(this.port, () => {
       logger.info("Server rodando na porta: " + this.port + " 🚀");

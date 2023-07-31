@@ -16,7 +16,6 @@ export default class pdfSaveProvider {
           `./public/invoices/${files[i]}`,
           options,
           async (err, data) => {
-            
             const invoice = {
               id: uuidv4(),
               client: "",
@@ -65,18 +64,36 @@ export default class pdfSaveProvider {
                 parseInt(data.pages[0].content[211].x as unknown as string) ===
                 150
               ) {
-                const [ month, year ] = data.pages[0].content[211].str.toLowerCase().split('/')
+                const [month, year] = data.pages[0].content[211].str
+                  .toLowerCase()
+                  .split("/");
                 invoice.referencemonth = month;
                 invoice.referenceyear = year;
               } else {
-                const [ month, year ] = data.pages[0].content[214].str.toLowerCase().split('/')
+                const [month, year] = data.pages[0].content[214].str
+                  .toLowerCase()
+                  .split("/");
                 invoice.referencemonth = month;
                 invoice.referenceyear = year;
               }
               if (data.pages[0].content[208].str === " ") {
                 invoice.date = new Date(data.pages[0].content[211].str);
+                const format = invoice.date.toISOString().split("T")[0];
+
+                const ano = format.split("-")[0];
+                const mes = format.split("-")[2];
+                const dia = format.split("-")[1];
+
+                invoice.date = new Date(`${ano}-${mes}-${dia}`);
               } else {
                 invoice.date = new Date(data.pages[0].content[208].str);
+                const format = invoice.date.toISOString().split("T")[0];
+
+                const ano = format.split("-")[0];
+                const mes = format.split("-")[2];
+                const dia = format.split("-")[1];
+
+                invoice.date = new Date(`${ano}-${mes}-${dia}`);
               }
 
               if (
@@ -94,15 +111,20 @@ export default class pdfSaveProvider {
                 invoice.client = data.pages[0].content[229].str;
               }
 
-              const invoicesRepository = new InvoicesRepository();
-              const exist = await invoicesRepository.findByClient(
-                invoice.client,
-                invoice.referencemonth,
-                invoice.referenceyear
-              );
+              try {
+                const invoicesRepository = new InvoicesRepository();
 
-              if (!exist) await invoicesRepository.saveInvoice(invoice);
+                const exist = await invoicesRepository.findByClient(
+                  invoice.client,
+                  invoice.referencemonth,
+                  invoice.referenceyear
+                );
 
+                if (!exist) await invoicesRepository.saveInvoice(invoice);
+              } catch (err) {
+                logger.info("Erro no processamento dos boletos");
+                logger.info(err);
+              }
             } else logger.error(`Erro na leitura de data em PDF: ${err}`);
           }
         );

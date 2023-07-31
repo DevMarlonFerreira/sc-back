@@ -14,9 +14,8 @@ class InvoicesRepository implements IInvoicesRepository {
   public async findAll(): Promise<IInvoice[]> {
     const invoices = await this.ormRepository
       .createQueryBuilder()
-      .select(["client", "reference", "date"])
-      .groupBy("client, date, reference")
-      .orderBy({ date: "DESC" })
+      .select(["client", "referencemonth", "referenceyear", "date"])
+      .orderBy({ date: "ASC" })
       .getRawMany();
 
     return invoices;

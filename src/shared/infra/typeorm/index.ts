@@ -9,7 +9,3 @@ export const connect = dataSource
   .catch(err => {
     logger.info('Error during Data Source initialization', err);
   });
-
-  // import { createConnection } from 'typeorm';
-
-  // createConnection();

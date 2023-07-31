@@ -1,8 +1,6 @@
 import logger from '@config/logger';
 require('@config/process');
 import { SetupServer } from './server';
-// import { app } from './app';
-// import { dataSource } from '../typeorm/ormconfig';
 
 (async (): Promise<void> => {
   try {
@@ -14,9 +12,3 @@ import { SetupServer } from './server';
     process.exit(1); // Failure = 1, Success = 0
   }
 })();
-
-// dataSource.initialize().then(() => {
-//   const server = app.listen(process.env.PORT || 3333, () => {
-//     console.log(`Server started on port ${process.env.PORT || 3333}! 🏆`);
-//   });
-// });
