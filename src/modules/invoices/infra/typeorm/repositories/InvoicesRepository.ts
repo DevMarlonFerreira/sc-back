@@ -4,12 +4,6 @@ import { Repository } from "typeorm";
 import Invoice from "../entities/Invoice";
 import { dataSource } from "@shared/infra/typeorm/ormconfig";
 
-// type SearchParams = {
-//   page: number;
-//   skip: number;
-//   take: number;
-// };
-
 class InvoicesRepository implements IInvoicesRepository {
   private ormRepository: Repository<Invoice>;
 
@@ -18,28 +12,35 @@ class InvoicesRepository implements IInvoicesRepository {
   }
 
   public async findAll(): Promise<IInvoice[]> {
-    await this.ormRepository.find({});
-
-    const [invoices, count] = await this.ormRepository
+    const invoices = await this.ormRepository
       .createQueryBuilder()
-      // .skip(skip)
-      // .take(take)
-      .getManyAndCount();
-
-    // const result = {
-    //   per_page: take,
-    //   total: count,
-    //   current_page: page,
-    //   data: invoices,
-    // };
+      .select(["client", "reference", "date"])
+      .groupBy("client, date, reference")
+      .orderBy({ date: "DESC" })
+      .getRawMany();
 
     return invoices;
   }
 
-  public async savePdf(pdf: IInvoice): Promise<IInvoice> {
-    await this.ormRepository.save(pdf);
+  public async findByClient(
+    client: string,
+    referencemonth: string,
+    referenceyear: string
+  ): Promise<IInvoice | null> {
+    const invoice = await this.ormRepository
+      .createQueryBuilder()
+      .where("client = :client ", { client })
+      .andWhere("referencemonth = :referencemonth", { referencemonth })
+      .andWhere("referenceyear = :referenceyear", { referenceyear })
+      .getOne();
 
-    return pdf;
+    return invoice;
+  }
+
+  public async saveInvoice(invoice: IInvoice): Promise<IInvoice> {
+    await this.ormRepository.save(invoice);
+
+    return invoice;
   }
 }
 

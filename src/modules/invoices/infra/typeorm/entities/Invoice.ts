@@ -11,15 +11,18 @@ import {
   class Invoice implements IInvoice{
     @PrimaryGeneratedColumn('uuid')
     id: string;
-  
+
     @Column()
     client: string;
 
+    @Column()   
+    referencemonth: string;
+  
     @Column()
-    reference: string;
+    referenceyear: string;
 
     @Column()
-    date: string;
+    date: Date;
 
     @Column()
     energyQuantity: string;

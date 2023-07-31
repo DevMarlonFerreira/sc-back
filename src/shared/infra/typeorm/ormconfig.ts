@@ -1,9 +1,6 @@
 import { DataSource, DatabaseType } from "typeorm";
 import Invoice from '@modules/invoices/infra/typeorm/entities/Invoice';
 
-// import {ConnectionOptions, DatabaseType} from 'typeorm';    
-
-// const dataBaseType: DatabaseType = process.env.DATABASE_URL;
 export const dataSource = new DataSource({
   type: process.env.DATABASE_TYPE as DatabaseType as any,
   host: process.env.DATABASE_HOST,
@@ -19,30 +16,3 @@ export const dataSource = new DataSource({
   entities: [Invoice],
   migrations: ["./src/shared/typeorm/migrations/*.ts"],
 });
-
-// export const dataSource2 = new DataSource({
-//   type: "postgres",
-//   host: "silly.db.elephantsql.com",
-//   port: 5432,
-//   username: "wltlahct",
-//   password: "KhqY_0AaNcHa6-RPRxeceeu3rtmtpJfM",
-//   database: "wltlahct",
-//   extra: {
-//     ssl: "true",
-//   },
-//   synchronize: true,
-//   logging: true,
-//   entities: ["./src/shared/typeorm/migrations/*.ts"],
-//   migrations: ["./src/shared/typeorm/migrations/*.ts"],
-// });
-
-// export const dataSource = new DataSource({
-//   type: "postgres",
-//   host: "localhost",
-//   port: 5432,
-//   username: "postgres",
-//   password: "docker",
-//   database: "apivendas",
-//   entities: ["./src/shared/typeorm/migrations/*.ts"],
-//   migrations: ["./src/shared/typeorm/migrations/*.ts"],
-// });

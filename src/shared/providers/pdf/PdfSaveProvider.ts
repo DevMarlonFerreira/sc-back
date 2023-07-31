@@ -1,44 +1,28 @@
 import fs from "fs";
-import { inject, injectable } from "tsyringe";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import logger from "@config/logger";
 import { PDFExtract } from "pdf.js-extract";
-
-// import { IInvoicesRepository } from "@modules/invoices/domain/repositories/IInvoicesRepository";
-
 import InvoicesRepository from "@modules/invoices/infra/typeorm/repositories/InvoicesRepository";
 
 const pdfExtract = new PDFExtract();
 const options = {};
 
 export default class pdfSaveProvider {
-  private data: [];
-
-  constructor() // @inject("IInvoicesRepository")
-  // private invoicesRepository: IInvoicesRepository
-  {}
-
-  // public async execute({ pdf }: any): Promise<void> {
-  //   await this.invoicesRepository.savePdf(pdf);
-  // }
-
   public savePdf(): void {
-    // this.invoicesRepository.savePdf(invoice);
-
     fs.readdir("./public/invoices", function (err, files) {
       for (var i = 0; i < files?.length; i++) {
         pdfExtract.extract(
           `./public/invoices/${files[i]}`,
           options,
           async (err, data) => {
-            const result = [];
-
+            
             const invoice = {
               id: uuidv4(),
               client: "",
-              reference: "",
-              date: "",
+              referencemonth: "",
+              referenceyear: "",
+              date: new Date(),
               energyQuantity: "",
               energyPriceUnit: "",
               energyValue: "",
@@ -51,7 +35,7 @@ export default class pdfSaveProvider {
               publicContributionValue: "",
               total: "",
               created_at: new Date(Date.now()),
-              updated_at: new Date(Date.now())
+              updated_at: new Date(Date.now()),
             };
 
             if (err) logger.error(`Erro na leitura de PDF: ${err}`);
@@ -81,13 +65,18 @@ export default class pdfSaveProvider {
                 parseInt(data.pages[0].content[211].x as unknown as string) ===
                 150
               ) {
-                invoice.reference = data.pages[0].content[211].str;
-              } else invoice.reference = data.pages[0].content[214].str;
-
-              if (data.pages[0].content[208].str === " ") {
-                invoice.date = data.pages[0].content[211].str;
+                const [ month, year ] = data.pages[0].content[211].str.toLowerCase().split('/')
+                invoice.referencemonth = month;
+                invoice.referenceyear = year;
               } else {
-                invoice.date = data.pages[0].content[208].str;
+                const [ month, year ] = data.pages[0].content[214].str.toLowerCase().split('/')
+                invoice.referencemonth = month;
+                invoice.referenceyear = year;
+              }
+              if (data.pages[0].content[208].str === " ") {
+                invoice.date = new Date(data.pages[0].content[211].str);
+              } else {
+                invoice.date = new Date(data.pages[0].content[208].str);
               }
 
               if (
@@ -104,11 +93,16 @@ export default class pdfSaveProvider {
               } else {
                 invoice.client = data.pages[0].content[229].str;
               }
-              logger.info(invoice);
-              logger.info('-------------------');
-              const invoicesRepository = new InvoicesRepository();
 
-              await invoicesRepository.savePdf(invoice);
+              const invoicesRepository = new InvoicesRepository();
+              const exist = await invoicesRepository.findByClient(
+                invoice.client,
+                invoice.referencemonth,
+                invoice.referenceyear
+              );
+
+              if (!exist) await invoicesRepository.saveInvoice(invoice);
+
             } else logger.error(`Erro na leitura de data em PDF: ${err}`);
           }
         );

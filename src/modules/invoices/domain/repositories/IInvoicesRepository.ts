@@ -1,12 +1,7 @@
 import { IInvoice } from "../models/IInvoice";
 
-// export type SearchParams = {
-//   page: number;
-//   skip: number;
-//   take: number;
-// };
-
 export interface IInvoicesRepository {
   findAll(): Promise<IInvoice[]>;
-  savePdf(pdf: IInvoice): Promise<IInvoice>;
+  saveInvoice(invoice: IInvoice): Promise<IInvoice>;
+  findByClient(client: string, referencemonth: string, referenceyear: string): Promise<IInvoice | null>;
 }
